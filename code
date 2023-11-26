@@ -1,0 +1,92 @@
+import random
+
+class User:
+    def __init__(self, user_id, pin, balance=0):
+        self.user_id = user_id
+        self.pin = pin
+        self.balance = balance
+        self.transaction_history = []
+
+    def display_balance(self):
+        print(f"Your current balance is ${self.balance}")
+
+    def display_transaction_history(self):
+        print("Transaction History:")
+        for transaction in self.transaction_history:
+            print(transaction)
+
+    def withdraw(self, amount):
+        if amount > 0 and amount <= self.balance:
+            self.balance -= amount
+            self.transaction_history.append(f"Withdraw: ${amount}")
+            print(f"Withdrawal successful. Remaining balance: ${self.balance}")
+        else:
+            print("Invalid amount or insufficient funds.")
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount
+            self.transaction_history.append(f"Deposit: ${amount}")
+            print(f"Deposit successful. Updated balance: ${self.balance}")
+        else:
+            print("Invalid amount for deposit.")
+
+    def transfer(self, amount, recipient):
+        if amount > 0 and amount <= self.balance:
+            self.balance -= amount
+            recipient.balance += amount
+            self.transaction_history.append(f"Transfer to {recipient.user_id}: ${amount}")
+            recipient.transaction_history.append(f"Transfer from {self.user_id}: ${amount}")
+            print(f"Transfer successful. Remaining balance: ${self.balance}")
+        else:
+            print("Invalid amount or insufficient funds for transfer.")
+
+# Generate random user ID and PIN for demonstration purposes
+user_id = random.randint(1000, 9999)
+pin = random.randint(1000, 9999)
+
+# Create user instance
+current_user = User(user_id, pin)
+
+def main():
+    print("Welcome to the Creative Bank ATM!")
+    user_input_id = int(input("Enter your user ID: "))
+    user_input_pin = int(input("Enter your PIN: "))
+
+    if user_input_id == current_user.user_id and user_input_pin == current_user.pin:
+        print("Login successful. Welcome to Creative Bank ATM!")
+
+        while True:
+            print("\nChoose an option:")
+            print("1. Transactions History")
+            print("2. Withdraw")
+            print("3. Deposit")
+            print("4. Transfer")
+            print("5. Quit")
+
+            choice = input("Enter your choice (1-5): ")
+
+            if choice == '1':
+                current_user.display_transaction_history()
+            elif choice == '2':
+                amount = float(input("Enter withdrawal amount: $"))
+                current_user.withdraw(amount)
+            elif choice == '3':
+                amount = float(input("Enter deposit amount: $"))
+                current_user.deposit(amount)
+            elif choice == '4':
+                recipient_id = int(input("Enter recipient's user ID: "))
+                recipient = User(recipient_id, 0)  # For simplicity, PIN is not needed for recipient
+                amount = float(input("Enter transfer amount: $"))
+                current_user.transfer(amount, recipient)
+            elif choice == '5':
+                print("Thank you for using Creative Bank ATM. Have a great day!")
+                break
+            else:
+                print("Invalid choice. Please enter a number between 1 and 5.")
+
+    else:
+        print("Invalid user ID or PIN. Exiting...")
+
+if __name__ == "__main__":
+    main()
